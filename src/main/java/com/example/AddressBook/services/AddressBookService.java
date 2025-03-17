@@ -1,71 +1,58 @@
 package com.example.AddressBook.services;
 
-//import com.example.AddressBook.Interfaces.IAddressBookService;
-import com.example.AddressBook.Exception.AddressBookException;
+import com.example.AddressBook.Interfaces.IAddressBookService;
+import com.example.AddressBook.Repository.AddressBookRepository;
 import com.example.AddressBook.dto.AddressBookDTO;
 import com.example.AddressBook.entity.AddressBook;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j  // Lombok annotation for logging
-public class AddressBookService {
+@Slf4j
+public class AddressBookService implements IAddressBookService {
 
-    private final List<AddressBook> contactList = new ArrayList<>();
-    private int idCounter = 1;
+    @Autowired
+    private AddressBookRepository addressBookRepository;
 
+    @Override
     public List<AddressBook> getAllContacts() {
-        log.info("Fetching all contacts");
-        return contactList;
+        return addressBookRepository.findAll();
     }
 
-
+    @Override
     public Optional<AddressBook> getContactById(int id) {
-        return Optional.ofNullable(contactList.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new AddressBookException("Employee with" + id + " not found")));
+        return addressBookRepository.findById(id);
     }
 
+    @Override
     public AddressBook addContact(AddressBookDTO addressBookDTO) {
-        log.info("Adding new contact: {}", addressBookDTO);
         AddressBook contact = new AddressBook();
-        contact.setId(idCounter++);
         contact.setName(addressBookDTO.getName());
         contact.setPhone(addressBookDTO.getPhone());
         contact.setAddress(addressBookDTO.getAddress());
-
-        contactList.add(contact);
-        log.debug("Contact added successfully: {}", contact);
-        return contact;
+        return addressBookRepository.save(contact);
     }
 
+    @Override
     public Optional<AddressBook> updateContact(int id, AddressBookDTO addressBookDTO) {
-        log.info("Updating contact with ID: {}", id);
-        Optional<AddressBook> contactOpt = getContactById(id);
-
-        contactOpt.ifPresent(contact -> {
+        return addressBookRepository.findById(id).map(contact -> {
             contact.setName(addressBookDTO.getName());
             contact.setPhone(addressBookDTO.getPhone());
             contact.setAddress(addressBookDTO.getAddress());
-            log.debug("Updated contact: {}", contact);
+            return addressBookRepository.save(contact);
         });
-
-        return contactOpt;
     }
 
+    @Override
     public boolean deleteContact(int id) {
-        log.warn("Deleting contact with ID: {}", id);
-        boolean removed = contactList.removeIf(contact -> contact.getId() == id);
-        if (removed) {
-            log.info("Contact with ID {} deleted successfully", id);
-        } else {
-            log.error("Contact with ID {} not found", id);
+        if (addressBookRepository.existsById(id)) {
+            addressBookRepository.deleteById(id);
+            return true;
         }
-        return removed;
+        return false;
     }
 }
