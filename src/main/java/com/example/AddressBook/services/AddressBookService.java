@@ -1,5 +1,6 @@
 package com.example.AddressBook.services;
 
+import com.example.AddressBook.Interfaces.IAddressBookService;
 import com.example.AddressBook.dto.AddressBookDTO;
 import com.example.AddressBook.entity.AddressBook;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AddressBookService {
+public class AddressBookService implements IAddressBookService {
 
     private final List<AddressBook> contactList = new ArrayList<>();
     private int idCounter = 1;
