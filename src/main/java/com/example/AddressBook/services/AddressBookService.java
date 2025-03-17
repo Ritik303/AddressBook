@@ -1,6 +1,7 @@
 package com.example.AddressBook.services;
 
 //import com.example.AddressBook.Interfaces.IAddressBookService;
+import com.example.AddressBook.Exception.AddressBookException;
 import com.example.AddressBook.dto.AddressBookDTO;
 import com.example.AddressBook.entity.AddressBook;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,12 @@ public class AddressBookService {
         return contactList;
     }
 
+
     public Optional<AddressBook> getContactById(int id) {
-        log.info("Fetching contact with ID: {}", id);
-        return contactList.stream()
+        return Optional.ofNullable(contactList.stream()
                 .filter(c -> c.getId() == id)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new AddressBookException("Employee with" + id + " not found")));
     }
 
     public AddressBook addContact(AddressBookDTO addressBookDTO) {
