@@ -17,9 +17,6 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    /**
-     * Sends a generic email.
-     */
     public void sendEmail(String to, String subject, String body) throws MessagingException {
         log.info("Preparing to send email to: {}", to);
 

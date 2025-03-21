@@ -1,9 +1,14 @@
 package com.example.AddressBook.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data  // Lombok automatically generates getters, setters, toString, etc.
+@Data
+// Lombok automatically generates getters, setters, toString, etc.
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddressBookDTO {
 
     @NotEmpty(message = "Name is required")
